@@ -21,7 +21,7 @@ public class Store extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    private User user;
+    private User owner;
 
     @Column(nullable = false,length = 100)
     private String name;
