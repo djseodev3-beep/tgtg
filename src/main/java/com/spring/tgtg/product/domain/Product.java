@@ -27,7 +27,8 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false,length = 100)
     private String name;
 
-    @Column(nullable = false,columnDefinition = "TEXT")
+//    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
