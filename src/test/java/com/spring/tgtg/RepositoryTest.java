@@ -4,10 +4,12 @@ import com.spring.tgtg.product.repository.ProductRepository;
 import com.spring.tgtg.reservation.repository.ReservationRepository;
 import com.spring.tgtg.review.domain.Review;
 import com.spring.tgtg.review.repository.ReviewRepository;
+import com.spring.tgtg.store.domain.Store;
 import com.spring.tgtg.store.repository.StoreRepository;
 import com.spring.tgtg.user.domain.User;
 import com.spring.tgtg.user.domain.UserRole;
 import com.spring.tgtg.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -15,6 +17,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+
+import java.time.LocalTime;
 
 @ActiveProfiles("test") // 테스트 시 어떤 profile로 설정할지 구성.
 @DataJpaTest // Spring 에서 JPA 관련 테스트 설정만 로드
@@ -41,16 +45,38 @@ public class RepositoryTest {
     @Autowired
     private ReviewRepository  reviewRepository;
 
+    static User user;
 
-
-    @Test
-    void save(){
-        userRepository.save(User.builder()
+    @BeforeEach
+    void setUp() {
+        user = User.builder()
                 .email("test1234@gmail.com")
                 .password("12344")
                 .name("test")
                 .phoneNumber("01012345678")
                 .role(UserRole.CUSTOMER)
+                .build();
+    }
+
+    @Test
+    void userSave(){
+        userRepository.save(user);
+    }
+
+    @Test
+    void storeSave(){
+        userRepository.save(user);
+
+        storeRepository.save(Store.builder()
+                .owner(user)
+                .name("빵집")
+                .address("인천광역시 부평구 청안로")
+                .phoneNumber("01012345678")
+                .description("남은 빵 팝니다")
+                .openTime(LocalTime.now())
+                .closeTime(LocalTime.now())
+                .latitude(57.11)
+                .longitude(123.11)
         .build());
     }
 
