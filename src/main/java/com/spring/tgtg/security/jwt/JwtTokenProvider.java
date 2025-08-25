@@ -46,10 +46,14 @@ public class JwtTokenProvider {
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
-
+    //Authentication 객체는 Security 가 현재 요청의 신원 + 자격 + 권한 을 표준화 해서 담아두는 객체
+    // principal : 누구인가를 의미, 보통 UserDetails 혹은 ID/eamil
+    // credentials : 자격을 증명, 비밀번호/토큰 (성공 후 보통 null)
+    // authorities : 권한 목록
     public Authentication getAuthentication(String token) {
         String email = getEmail(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        //이 클래스는 "토큰 타입"(인증 요청/ 결과를 담는 그릇)이다. 이름 때문에 "폼 로그인" 같지만, 폼 로그인에 특화된건 아니고 principal/credentials/authorities 를 담을 수 있는 범용 토큰
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
     public String getEmail(String token){
