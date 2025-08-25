@@ -1,6 +1,7 @@
 package com.spring.tgtg.security;
 
 import com.spring.tgtg.security.jwt.JwtAuthenticationFilter;
+import com.spring.tgtg.security.jwt.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     private final RequestMatcher whiteList = new OrRequestMatcher(
             new AntPathRequestMatcher("/api/auth/**"),
@@ -42,6 +44,29 @@ public class SecurityConfig {
                         .anyRequest().authenticated()) // 앞에서 설정한 Request 말고는 전부 인증을 필요.
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); //
         return http.build();
+    }
+
+    //표준 Spring Security
+    // 필터에서 토큰 추출 -> unauthenticationToken 생성 -> authenticationManager.authenticate(...)
+    // provider 에서 JWT 검증 + UserDetailsService 로드 -> authenticated Authentication 반환
+    // 설정에서 . authenticationProvider(jwtAuthenticationProvider) 등록.
+
+    //Spring Security 에서 AuthenticationManager 기본 구현체는 ProviderManager.
+
+
+    @Bean
+    public SecurityFilterChain security(HttpSecurity http,
+                                        JwtAuthenticationFilter jwtFilter,
+                                        JwtAuthenticationProvider jwtProvider) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authenticationProvider(jwtProvider) // 커스텀 Provider 등록, 등록하지 않으면 Manager가 JWT 토큰을 처리할 Provider 못찾아서 ProviderNotFoundException 발생.
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .build();
     }
 
     @Bean
