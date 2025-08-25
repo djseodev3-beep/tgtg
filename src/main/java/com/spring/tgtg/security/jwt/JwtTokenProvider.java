@@ -46,7 +46,6 @@ public class JwtTokenProvider {
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
-
     //Authentication 객체는 Security 가 현재 요청의 신원 + 자격 + 권한 을 표준화 해서 담아두는 객체
     // principal : 누구인가를 의미, 보통 UserDetails 혹은 ID/eamil
     // credentials : 자격을 증명, 비밀번호/토큰 (성공 후 보통 null)
